@@ -21,7 +21,14 @@ def index():
         existing_user = collection.find_one({'name': request.form['username']})
         if request.form['password'] == existing_user['password']:
             session['user'] = request.form['username']
-            return redirect(url_for('protected'))
+            if existing_user['AccountType'] == 'Admin':
+                return redirect(url_for('protected'))
+            elif existing_user['AccountType'] == 'Mfg':
+                return redirect(url_for('protected'))
+            elif existing_user['AccountType'] == 'Dealer':
+                return redirect(url_for('protected'))
+            elif existing_user['AccountType'] == 'SuperAdmin':
+                return redirect(url_for('superadminlogin'))            
         else:
             return "Invalid Password/Email"
 
@@ -40,6 +47,14 @@ def register():
                 UserData= {'data':{
                 'ns':'ipdb.scm.admin',
                 'link':'Will change when created Admin Type',
+                'name':request.form['username']
+                },
+                }
+                UserMetadata = {'email': request.form['email']}#will change when admin type is created
+            elif AcType == 'SuperAdmin':
+                UserData= {'data':{
+                'ns':'ipdb.scm.SuperAdmin',
+                'link':'Will change when created SuperAdmin Type',
                 'name':request.form['username']
                 },
                 }
@@ -89,6 +104,11 @@ def protected():
         return render_template('protected.html')
 
     return redirect(url_for('index'))
+
+@app.route('/superadminlogin')
+def superadminlogin():
+    if g.user:
+        return render_template('superadmin.html', user=g.user)
 
 
 @app.before_request
