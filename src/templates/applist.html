@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>App Details For {{params}}</title>
+    <title>App List</title>
     <style>
-        body{
+    body{
     margin: 0;
     font-family: arial;
     }
+        .main-container {
+display: flex;
+width: 800px;
+margin: 0 auto;
+}
 
 .item{
   margin: 10px 10px;
@@ -28,10 +32,11 @@
 }
 
 p{
-  text-align: center;
-  vertical-align: middle;
-  margin-top: 45%;
-  font-size: 24px;
+text-align: center;
+vertical-align: middle;
+margin-top: 60px;
+font-size: 24px;
+word-wrap: break-word;
 }
 
     </style>
@@ -40,27 +45,37 @@ p{
 <div style="width: 100%;height: 50px;background: #9f0fb9;/*! margin: 0; */padding: 10px;font-size: 40px;font-family: arial;color: #fff;">
     SupplyChain
 </div>
-    APP Details will be displayed here. {{params}}
-
-
 
 <div class="main-container">
-    <a href="/appdetails/{{params}}/createtype">
+    {% for app in params %}
+    <a href="/appdetails/{{app['id']}}">
         <div class="item card">
+            <div>
+
+
+            {% for key, value in app.items() %}
+            {% if key == 'data' %}
             <p>
-                Create Type
+                {{value['name']}}
+                <!--get details from {{params}} -->
             </p>
+            {% endif %}
+            {% if key == 'id' %}
+            <p>
+                {{value}}
+                <!--get details from {{params}} -->
+            </p>
+            {% endif %}
+            {% endfor %}
+                       </div>
         </div>
     </a>
-    <a href="/appdetails/{{params}}/typeslist">
-        <div class="item card">
-            <p>
-                Display Types
-            </p>
-        </div>
-    </a>
+    {% endfor %}
 </div>
 
 <h2><a href="/logout">Logout</a></h2>
 </body>
 </html>
+
+
+
