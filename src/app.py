@@ -21,7 +21,7 @@ allowed_pages = {
     "Admin": ['protected', 'usercreated', 'logout'],
     "Mfg": ['protected', 'usercreated', 'logout'],
     "Dealer": ['protected', 'usercreated', 'logout'],
-    "SuperAdmin": ['logout', 'superadminlogin', 'createapp', 'appdetails', 'applist'],
+    "SuperAdmin": ['logout', 'superadminlogin', 'createapp', 'appdetails', 'applist','typeslist','createtype'],
 }
 
 
@@ -253,8 +253,51 @@ def applist():
 
 @app.route('/appdetails/<appid>/createtype', methods=['GET','POST'])
 def createtype(appid):
-    if g.user:
-        return render_template('createtype.html',params=appid)
+    if session['myaccount'] is not None and 'createtype' in allowed_pages[session['myaccount']]:
+        #if g.user:
+            if request.method == 'POST':
+                db=client['bigchain']
+                collection=['assets']
+                TypeAsset = {'data': {
+                'ns': 'ipdb.'+collection.find({'id':appid})['data']['name']+'.apptype.'+request.form['ns'],
+                'name': request.form['typename'],
+                'link': appid
+                },
+            }
+
+        #AppMetadata = {'can_link': request.form['canlink']}
+                db = client['users']
+                collection = db['users']
+                existing_user = collection.find_one({'name': getsession()})
+                if existing_user:
+                    if enableBigChain:
+                        prepared_creation_tx_AppType = bdb.transactions.prepare(
+                    operation='CREATE',
+                    signers=existing_user['pub_key'],
+                    asset=TypeAsset,
+                    #metadata=AppMetadata,
+                    )
+                        fulfilled_creation_tx_AppType = bdb.transactions.fulfill(prepared_creation_tx_AppType,
+                                                                     private_keys=existing_user['priv_key'])
+                        sent_creation_tx = bdb.transactions.send_commit(fulfilled_creation_tx_AppType)
+                        AppAsset_id = fulfilled_creation_tx_AppType['id']
+                        #update metadata canlink of the app
+                        print("APP Creation Successfull..")
+                        print(AppAsset_id)
+                        return redirect(url_for('createtype'))
+                    else:
+                        return redirect(url_for('createtype'))
+                        pass
+                else:
+                    pass
+        # if user not found
+
+        #elif request.method == 'GET':
+        #    return render_template('createtype.html',params=appid)
+
+    else:
+        pass
+
 
 
 @app.route('/appdetails/<appid>/typeslist', methods=['GET'])
