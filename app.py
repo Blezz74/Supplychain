@@ -256,8 +256,10 @@ def createtype(appid):
     if session['myaccount'] is not None and 'createtype' in allowed_pages[session['myaccount']]:
         #if g.user:
             if request.method == 'POST':
+                db=client['bigchain']
+                collection=['assets']
                 TypeAsset = {'data': {
-                'ns': 'ipdb.apptype.'+request.form['ns'],
+                'ns': 'ipdb.'+collection.find({'id':appid})['data']['name']+'.apptype.'+request.form['ns'],
                 'name': request.form['typename'],
                 'link': appid
                 },
@@ -279,6 +281,7 @@ def createtype(appid):
                                                                      private_keys=existing_user['priv_key'])
                         sent_creation_tx = bdb.transactions.send_commit(fulfilled_creation_tx_AppType)
                         AppAsset_id = fulfilled_creation_tx_AppType['id']
+                        #update metadata canlink of the app
                         print("APP Creation Successfull..")
                         print(AppAsset_id)
                         return redirect(url_for('createtype'))
@@ -299,9 +302,8 @@ def createtype(appid):
 
 @app.route('/appdetails/<appid>/typeslist', methods=['GET'])
 def typeslist(appid):
-    if session['myaccount'] is not None and 'typelist' in allowed_pages[session['myaccount']]:
-        if g.user:
-            return render_template('typeslist.html',params=appid)
+    if g.user:
+        return render_template('typeslist.html',params=appid)
 
 @app.before_request
 def before_request():
