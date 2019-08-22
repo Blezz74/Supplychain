@@ -1,8 +1,8 @@
-
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Login Page</title>
-        <style>
+  <title></title>
+  <style>
     body{
     margin: 0;
     font-family: arial;
@@ -41,15 +41,18 @@ p{
     </style>
 </head>
 <body>
-<div style="width: 100%;height: 50px;background: #9f0fb9;/*! margin: 0; */padding: 10px;font-size: 40px;font-family: arial;color: #fff;">
-    SupplyChain
+  <div style="width: 100%;height: 50px;background: #9f0fb9;/*! margin: 0; */padding: 10px;font-size: 40px;font-family: arial;color: #fff;">
+    All Apps
 </div>
-<h1>Please login</h1>
-<form method="POST" class="main-container">
-    <input type="text" name="username" placeholder="Username">
-    <input type="password" name="password" placeholder="Password">
-    <input type="submit"/>
-</form>
-<h4><a href="/register" >Register</a></h4>
+<div class="main-container">
+  {% for app in apps %}
+    <a href="/appdetails">
+        <div class="item card", value=appdetails(app)>
+            <p>
+              {{app}}
+            </p>
+        </div>
+    </a>
+    {% endfor %}
 </body>
 </html>
